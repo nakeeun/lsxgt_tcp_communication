@@ -2,17 +2,19 @@ const net = require('net');
 const socket = net.createConnection({port: 2004, host: '192.168.0.120' });
 
 socket.on('connect', () => {
-  var temp = reqData();//Buffer.from([0x54,0x00,0x02,0x00,0x00,0x00,0x01,0x00,0x04,0x00,0x25,0x4D,0x57,0x30]);
+  var temp = reqData();
   var header = companyHeader(temp);
   var total_length = temp.length+header.length;
   var data = Buffer.concat([header,temp],total_length);
   socket.write(data);
 });
-socket.on('data', serverData => { // 6. receive data from server
+
+socket.on('data', serverData => {
   console.log(`[client] received data from server: ${serverData}`);
   console.log(Buffer.from(serverData));
   socket.destroy();
 });
+
 var companyHeader = function(dataFrame){
   var company_id = Buffer.from('LSIS-XGT');
   var reserved1 = Buffer.from([0x00,0x00]);
