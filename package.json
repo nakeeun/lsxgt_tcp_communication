@@ -1,0 +1,23 @@
+{
+  "name": "lsxgt_tcp_communication",
+  "version": "1.0.0",
+  "description": "This project is for LS XGT protocol TCP communication based on nodejs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nakeeun/lsxgt_tcp_communication"
+  },
+  "keywords": [
+    "#LS",
+    "#XGT",
+    "#TCP"
+  ],
+  "author": "Nakeun Choi of ROgistics",
+  "license": "MIT",
+  "dependencies": {
+    "net": "^1.0.2"
+  }
+}
