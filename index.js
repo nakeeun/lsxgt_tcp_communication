@@ -1,17 +1,18 @@
 const net = require('net');
-const socket = net.createConnection({port: 2004, host: '192.168.0.120' });
+const XGTsocket = net.createConnection({port: 2004, host: '192.168.0.120' });
 
-socket.on('connect', () => {
-  var temp = reqData('%DW10000');
+XGTsocket.on('connect', () => {
+  var dataAddr = '%DW100';
+  var temp = writeData(dataAddr);
   var header = companyHeader(temp);
   var total_length = temp.length+header.length;
-  var data = Buffer.concat([header,temp],total_length);
-  socket.write(data);
+  var reqData = Buffer.concat([header,temp],total_length);
+  request_data(reqData,dataType);
 });
-socket.on('data', serverData => { 
+XGTsocket.on('data', serverData => { 
   console.log(`[client] received data from server: ${serverData}`);
   console.log(Buffer.from(serverData));
-  socket.destroy();
+  XGTsocket.destroy();
 });
 var companyHeader = function(dataFrame){
   var company_id = Buffer.from('LSIS-XGT');
@@ -31,7 +32,7 @@ var companyHeader = function(dataFrame){
   console.log(data);                               
   return data;                               
 }
-var reqData = function(address){
+var readData = function(address){
   var data;
   var command = Buffer.from([0x54,0x00]);              //read(0x54), write(0x58)
   var dataType = Buffer.from([0x02,0x00]);
@@ -44,7 +45,9 @@ var reqData = function(address){
   console.log(data);
   return data;
 }
-
+var request_data = function(reqData,dataType){
+    XGTsocket.write(reqData);
+}
 /*setInterval(() => {
 
 }, 1000);*/
