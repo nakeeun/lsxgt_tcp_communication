@@ -55,31 +55,33 @@ exports.seqWriteData = function(address,dataType,tempData){
     var command = Buffer.from([0x58,0x00]);
     var set_data_Type = setDataType(dataType);
     var reserved = Buffer.from([0x00,0x00]);
-    var block = Buffer.from([tempData.length,0x00],'hex');
-    var temp_length = command.length+set_data_Type.length+reserved.length+block.length;
-    data = Buffer.concat([command, set_data_Type,reserved,block],temp_length);
-    for(var i=0; i<address.length;i++)
-    {
-      var addr = Buffer.from(address[i], 'utf8');
-      var addr_length = Buffer.from([addr.length,0x00]);
-      var add_addr_length = data.length+addr_length.length+addr.length;
-      data = Buffer.concat([data,addr_length,addr],add_addr_length);
+    var block = Buffer.from([0x01,0x00],'hex');
+    var addr = Buffer.from(address, 'utf8');
+    var addr_length = Buffer.from([addr.length,0x00]);
+    var add_addr_length = command.length+set_data_Type.length+reserved.length+block.length+addr_length.length+addr.length;
+    data = Buffer.concat([command, set_data_Type,reserved,block,addr_length,addr],add_addr_length);
+    var add_data = Buffer.from(tempData[0], 'hex');
+      
+    if(add_data.length == 1){
+      add_data = Buffer.from([tempData[0],0x00],'hex');
     }
-    console.log(data);
-    for(var i=0;i<tempData.length;i++)
+    for(var i=1;i<tempData.length;i++)
     {
-      var add_data = Buffer.from(tempData[i], 'hex');
-      //console.log(add_data)
-      if(add_data.length == 1){
-        add_data = Buffer.from([tempData[i],0x00],'hex');
+      var temp_add_data = Buffer.from(tempData[i], 'hex');
+      
+      if(temp_add_data.length == 1){
+        temp_add_data = Buffer.from([tempData[i],0x00],'hex');
       }
-      var data_length = Buffer.from([add_data.length,0x00]);
-      var add_data_length = data.length+data_length.length+add_data.length;
-      data = Buffer.concat([data,data_length,add_data],add_data_length);
+      var add_data_length = temp_add_data.length+add_data.length;
+      add_data = Buffer.concat([add_data,temp_add_data],add_data_length);
+      console.log(temp_add_data);
     }
-    console.log(data);
+    var data_length = Buffer.from([add_data.length,0x00]);
+    var add_data_length = data.length+data_length.length+add_data.length;
+    data = Buffer.concat([data,data_length,add_data],add_data_length);
+    console.log(data.toString('hex'))
     return data;
-  }
+ }
 var setDataType = function(dataType){
   var temp;
   switch(dataType){
