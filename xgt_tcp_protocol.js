@@ -39,17 +39,15 @@ exports.writeData = function(address,dataType,tempData){
     var addr = Buffer.from(address, 'utf8');
     var addr_length = Buffer.from([addr.length,0x00]);
     var data = Buffer.from(tempData, 'hex');
-    //console.log(data)
     if(data.length == 1){
       data = Buffer.from([tempData,0x00],'hex');
     }
     var data_length = Buffer.from([data.length,0x00]);
     var total_length = command.length+set_data_Type.length+reserved.length+block.length+addr_length.length+addr.length+data.length+data_length.length;
     data = Buffer.concat([command, set_data_Type,reserved,block,addr_length,addr,data_length,data],total_length);
-    
-    //console.log(data);
     return data;
 }
+
 exports.seqWriteData = function(address,dataType,tempData){
     var data;
     var command = Buffer.from([0x58,0x00]);
@@ -74,14 +72,28 @@ exports.seqWriteData = function(address,dataType,tempData){
       }
       var add_data_length = temp_add_data.length+add_data.length;
       add_data = Buffer.concat([add_data,temp_add_data],add_data_length);
-      console.log(temp_add_data);
+      //console.log(temp_add_data);
     }
+    
     var data_length = Buffer.from([add_data.length,0x00]);
     var add_data_length = data.length+data_length.length+add_data.length;
     data = Buffer.concat([data,data_length,add_data],add_data_length);
-    console.log(data.toString('hex'))
+    //console.log(data.toString('hex'))
     return data;
  }
+exports.seqReadData = function(address,dataType,tempData){
+  var data;
+  var command = Buffer.from([0x54 ,0x00]);
+  var set_data_Type = setDataType(dataType);
+  var reserved = Buffer.from([0x00,0x00]);
+  var block = Buffer.from([0x01,0x00],'hex');
+  var addr = Buffer.from(address, 'utf8');
+  var addr_length = Buffer.from([addr.length,0x00]);
+  var data_length = Buffer.from([tempData,0x00],'hex');
+  var add_addr_length = command.length+set_data_Type.length+reserved.length+block.length+addr_length.length+addr.length+data_length.length;  
+  data = Buffer.concat([command, set_data_Type,reserved,block,addr_length,addr,data_length],add_addr_length);
+  return data;
+}
 var setDataType = function(dataType){
   var temp;
   switch(dataType){
