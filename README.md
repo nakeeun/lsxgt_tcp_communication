@@ -3,7 +3,8 @@ This project is for LS XGT protocol TCP communication based on nodejs.
 There's still room for improvement.
 
 
-# function
+## function
+ - companyHeader : LS plc company header
  - readData : read single data
  - writeData : write single data
  - seqReadData : read sequence data
